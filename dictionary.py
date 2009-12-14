@@ -63,6 +63,12 @@ ok
 >>> d.remove(2)
 >>> d.insert(2, 0)
 
+>>> d = Dictionary(5)
+>>> d.insert(6, 4)
+>>> d.insert(6, 3)
+>>> d.get(6)
+3
+
 '''
 
 DEFAULT_SIZE = 17
@@ -84,6 +90,9 @@ class Dictionary(object):
         hash = self._hashfun(key)
         for i in xrange(0, self._size):
             if self._table[hash] in [SLOT_EMPTY, SLOT_REMOVED]:
+                self._table[hash] = (key, value)
+                return
+            elif self._table[hash][0] == key:
                 self._table[hash] = (key, value)
                 return
             hash = self._rehash(hash, key)
