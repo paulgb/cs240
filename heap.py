@@ -44,6 +44,8 @@ True
 # Heapifying input
 
 >>> h = Heap([(5,5),(9,9),(2,2),(8,8),(4,4),(6,6),(3,3),(1,1)])
+>>> h.size()
+8
 >>> h.pop()
 (1, 1)
 >>> h.pop()
@@ -140,7 +142,7 @@ class Heap(object):
                     self._swap(left_child_index)
 
     def size(self):
-        pass
+        return len(self._array) - 1
 
     def empty(self):
         return len(self._array) == 1
