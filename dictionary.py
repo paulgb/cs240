@@ -1,20 +1,31 @@
 
 r'''
 
->>> d = Dictionary()
+>>> d = Dictionary(7)
+>>> d.element(4)
+False
 >>> d.insert(4, "Foo")
+>>> d.element(4)
+True
 >>> d.get(4)
 'Foo'
 >>> d.insert(9, "Bar")
 >>> d.get(9)
 'Bar'
->>> d.insert(21, "Baz")
->>> d.get(21)
+>>> d.insert(11, "Baz")
+>>> d.get(11)
 'Baz'
->>> d.get(9)
-'Bar'
 >>> d.get(4)
 'Foo'
+>>> sorted(d.keys())
+[4, 9, 11]
+>>> sorted(d.values())
+['Bar', 'Baz', 'Foo']
+>>> d.remove(4)
+>>> d.element(4)
+False
+>>> d.get(11)
+'Baz'
 
 '''
 
@@ -43,7 +54,18 @@ class Dictionary(object):
         raise OverflowError, 'dictionary is full'
 
     def remove(self, key):
-        pass
+        hash = self._hashfun(key)
+        for i in xrange(0, self._size):
+            if self._table[hash] == SLOT_EMPTY:
+                raise KeyError, key
+            if self._table[hash] != SLOT_REMOVED:
+                k, v = self._table[hash]
+                if key == k:
+                    self._table[hash] = SLOT_REMOVED
+                    return
+                else:
+                    hash = self._rehash(hash, key)
+        raise KeyError, key
 
     def get(self, key):
         hash = self._hashfun(key)
@@ -54,10 +76,29 @@ class Dictionary(object):
                 k, v = self._table[hash]
                 if key == k:
                     return v
-                else:
-                    hash = self._rehash(hash, key)
+            hash = self._rehash(hash, key)
         raise KeyError, key
 
     def element(self, key):
-        pass
+        try:
+            self.get(key)
+        except KeyError:
+            return False
+        return True
+
+    def keys(self):
+        keys = []
+        for slot in self._table:
+            if slot not in (SLOT_EMPTY, SLOT_REMOVED):
+                key, value = slot
+                keys.append(key)
+        return keys
+
+    def values(self):
+        values = []
+        for slot in self._table:
+            if slot not in (SLOT_EMPTY, SLOT_REMOVED):
+                key, value = slot
+                values.append(value)
+        return values
 
