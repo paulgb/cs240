@@ -68,11 +68,6 @@ True
 class Heap(object):
     _array = list([None])
 
-    def _swap(self, index):
-        parent_index = index / 2
-        (self._array[index], self._array[parent_index]) = \
-                (self._array[parent_index], self._array[index])
-
     def __init__(self, initial=None):
         if initial is None:
             self._array = [None]
@@ -80,6 +75,37 @@ class Heap(object):
             self._array = [None] + initial
             for i in xrange(len(initial) / 2, 0, -1):
                 self._heapify(i)
+
+    def _swap(self, index):
+        parent_index = index / 2
+        (self._array[index], self._array[parent_index]) = \
+                (self._array[parent_index], self._array[index])
+
+    def _upheap(self, index):
+        parent_index = index / 2
+        if parent_index == 0:
+            return
+        if self._array[parent_index][0] > self._array[index][0]:
+            self._swap(index)
+            self._upheap(parent_index)
+
+    def _downheap(self, index):
+        left_child_index = index * 2
+        right_child_index = index * 2 + 1
+        if right_child_index < len(self._array):
+            (min_value, min_index) = min(
+                    (self._array[left_child_index][0],
+                        left_child_index),
+                    (self._array[right_child_index][0],
+                        right_child_index))
+            if min_value < self._array[index]:
+                self._swap(min_index)
+                self._downheap(min_index)
+        else:
+            if left_child_index < len(self._array):
+                if self._array[left_child_index][0] < \
+                        self._array[index][0]:
+                    self._swap(left_child_index)
 
     def _heapify(self, index):
         if index > len(self._array) / 2:
@@ -105,14 +131,6 @@ class Heap(object):
         self._array.append((key, value))
         self._upheap(len(self._array) - 1)
 
-    def _upheap(self, index):
-        parent_index = index / 2
-        if parent_index == 0:
-            return
-        if self._array[parent_index][0] > self._array[index][0]:
-            self._swap(index)
-            self._upheap(parent_index)
-
     def pop(self):
         if self.empty():
             raise IndexError, 'Can\'t pop from empty heap'
@@ -122,24 +140,6 @@ class Heap(object):
             self._array[1] = self._array[-1]
             self._array.pop()
             self._downheap(1)
-
-    def _downheap(self, index):
-        left_child_index = index * 2
-        right_child_index = index * 2 + 1
-        if right_child_index < len(self._array):
-            (min_value, min_index) = min(
-                    (self._array[left_child_index][0],
-                        left_child_index),
-                    (self._array[right_child_index][0],
-                        right_child_index))
-            if min_value < self._array[index]:
-                self._swap(min_index)
-                self._downheap(min_index)
-        else:
-            if left_child_index < len(self._array):
-                if self._array[left_child_index][0] < \
-                        self._array[index][0]:
-                    self._swap(left_child_index)
 
     def size(self):
         return len(self._array) - 1
