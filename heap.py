@@ -108,10 +108,10 @@ class Heap(object):
                     self._swap(left_child_index)
 
     def _heapify(self, index):
-        if index > len(self._array) / 2:
-            return
         left_child_index = index * 2
         right_child_index = index * 2 + 1
+        if left_child_index > len(self._array):
+            return
         if right_child_index < len(self._array):
             (min_value, min_index) = min(
                     (self._array[left_child_index][0],
